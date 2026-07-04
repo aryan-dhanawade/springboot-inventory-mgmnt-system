@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -17,6 +19,7 @@ public class Category {
 	@Column(nullable = false, unique = true)
 	private String name;
 	
+	@JsonManagedReference("category-products")
 	@OneToMany(mappedBy = "category")
 	private List<Product> product = new ArrayList<>();
 
