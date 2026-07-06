@@ -2,6 +2,7 @@ package com.aryan.inventory.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.aryan.inventory.entity.Category;
@@ -18,16 +19,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public Category addCategory(Category category) {
         return categoryRepository.save(category);
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','EMPLOYEE')")
     public Category getCategoryById(Long id) {
 
         return categoryRepository.findById(id)
@@ -35,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public Category updateCategory(Long id, Category updatedCategory) {
 
         Category existing = categoryRepository.findById(id)
@@ -46,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)

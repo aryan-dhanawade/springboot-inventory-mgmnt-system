@@ -2,6 +2,7 @@ package com.aryan.inventory.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.aryan.inventory.dto.ProductRequest;
@@ -15,11 +16,14 @@ import com.aryan.inventory.repository.CategoryRepository;
 import com.aryan.inventory.repository.ProductRepository;
 import com.aryan.inventory.repository.SupplierRepository;
 
+
+
 import com.aryan.inventory.exception.CategoryNotFoundException;
 import com.aryan.inventory.exception.SupplierNotFoundException;
 import com.aryan.inventory.exception.ProductNotFoundException;
 
 @Service
+
 public class ProductServiceImpl implements ProductService {
 
 	private final ProductRepository productRepository;
@@ -35,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	public ProductResponse addProduct(ProductRequest request) {
 
 		Category category = categoryRepository.findById(request.getCategoryId())
@@ -53,6 +58,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'EMPLOYEE')")
 	public List<ProductResponse> getAllProducts() {
 		
 		return productRepository.findAll()
@@ -62,6 +68,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'EMPLOYEE')")
 	public ProductResponse getProductById(Long id) {
 		Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
 		
@@ -69,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 	public ProductResponse updateProduct(Long id, ProductRequest updateRequest) {
 
 		Product existing = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
@@ -88,6 +96,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public void deleteProduct(Long id) {
 
 		Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));

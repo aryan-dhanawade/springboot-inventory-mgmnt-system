@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.aryan.inventory.entity.Product;
+
 
 import com.aryan.inventory.dto.ProductRequest;
 import com.aryan.inventory.dto.ProductResponse;
