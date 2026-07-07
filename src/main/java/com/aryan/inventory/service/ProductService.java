@@ -20,6 +20,8 @@ public interface ProductService {
 	
 	void deleteProduct(Long id);
 	
+	List<ProductResponse> getLowStockProducts();
+	
 	
 	
 

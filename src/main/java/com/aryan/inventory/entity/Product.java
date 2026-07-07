@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
@@ -28,6 +30,9 @@ public class Product {
     @Min(0)
     @Column(nullable = false)
     private int quantity;
+    
+    @PositiveOrZero
+    private Integer reorderLevel;
 
     @Column(nullable = false, unique = true)
     private String sku;

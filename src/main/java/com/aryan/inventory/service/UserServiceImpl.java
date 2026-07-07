@@ -26,86 +26,73 @@ public class UserServiceImpl implements UserService {
 	public UserServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-	
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public List<UserResponse> getAllUsers() {
 		return userRepository.findAll().stream().map(this::mapUserToResponse).toList();
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public UserResponse getUserById(Long id) {
-		User user = userRepository.findById(id)
-				.orElseThrow(
-				() -> new UserNotFoundException((
-						id
-						))
-				);
-		
+		User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException((id)));
+
 		return mapUserToResponse(user);
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public UserResponse updateUserRole(Long id, UpdateRoleRequest request) {
-		User existing = userRepository.findById(id)
-				.orElseThrow(
-						() -> new UserNotFoundException(id)
-						);
-		
+		User existing = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
-		
 		String currentUsername = getCurrentUsername();
-		
-		if(existing.getUsername().equals(currentUsername)) {
-		    throw new CannotModifyOwnRoleException();
+
+		if (existing.getRole() == Role.ADMIN && request.getRole() != Role.ADMIN
+				&& userRepository.countByRole(Role.ADMIN) == 1) {
+			throw new CannotModifyOwnRoleException();
 		}
 		
+		if(existing.getRole() == request.getRole()) {
+		    return mapUserToResponse(existing);
+		}
+
 		existing.setRole(request.getRole());
-		
+
 		User saved = userRepository.save(existing);
-		
+
 		return mapUserToResponse(saved);
 	}
-	
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@Override
 	public void deleteUser(Long id) {
-		User user = userRepository.findById(id)
-				.orElseThrow(
-				() -> new UserNotFoundException((
-						id
-						))
-				);
-	
-		
+		User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException((id)));
+
 		String currentUsername = getCurrentUsername();
-		
-		if(user.getUsername().equals(currentUsername)) {
+
+		if (user.getUsername().equals(currentUsername)) {
 			throw new CannotDeleteCurrentUserException();
-			
+
 		}
-		
+
 		long adminCount = userRepository.countByRole(Role.ADMIN);
-		
-		if(adminCount == 1) {
+
+		if (user.getRole() == Role.ADMIN && adminCount == 1) {
 			throw new CannotDeleteCurrentUserException();
 		}
-		
+
 		userRepository.delete(user);
 
 	}
-	
+
 	@PreAuthorize("isAuthenticated()")
-	public UserResponse whoAmI() {		
-		User user = userRepository.findByUsername(getCurrentUsername())
-		        .orElseThrow(InternalServerException::new);
+	public UserResponse whoAmI() {
+		User user = userRepository.findByUsername(getCurrentUsername()).orElseThrow(InternalServerException::new);
 
 		return mapUserToResponse(user);
 	}
-	
+
 	private UserResponse mapUserToResponse(User user) {
 		UserResponse response = new UserResponse();
 
@@ -115,12 +102,11 @@ public class UserServiceImpl implements UserService {
 
 		return response;
 	}
-	
+
 	private String getCurrentUsername() {
-		Authentication authentication = 
-				SecurityContextHolder.getContext().getAuthentication();
-		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 		return authentication.getName();
 	}
-	
+
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.aryan.inventory.entity.Category;
 import com.aryan.inventory.exception.CategoryNotFoundException;
 import com.aryan.inventory.repository.CategoryRepository;
+import com.aryan.inventory.util.CaptializeString;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -21,7 +22,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public Category addCategory(Category category) {
-        return categoryRepository.save(category);
+
+    			
+        return categoryRepository.save(normalizeName(category));
     }
 
     @Override
@@ -58,5 +61,11 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new CategoryNotFoundException(id));
 
         categoryRepository.delete(category);
+    }
+    
+    private Category normalizeName(Category category) {
+    	String normalizedName = CaptializeString.capitalizeString(category.getName());
+    	category.setName(normalizedName);
+    	return category;
     }
 }

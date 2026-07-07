@@ -16,8 +16,6 @@ import com.aryan.inventory.repository.CategoryRepository;
 import com.aryan.inventory.repository.ProductRepository;
 import com.aryan.inventory.repository.SupplierRepository;
 
-
-
 import com.aryan.inventory.exception.CategoryNotFoundException;
 import com.aryan.inventory.exception.SupplierNotFoundException;
 import com.aryan.inventory.exception.ProductNotFoundException;
@@ -53,25 +51,22 @@ public class ProductServiceImpl implements ProductService {
 		mapRequestToProduct(product, request, category, supplier);
 
 		Product saved = productRepository.save(product);
-		
+
 		return mapProductToResponse(saved);
 	}
 
 	@Override
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'EMPLOYEE')")
 	public List<ProductResponse> getAllProducts() {
-		
-		return productRepository.findAll()
-				.stream()
-				.map(this::mapProductToResponse)
-				.toList();
+
+		return productRepository.findAll().stream().map(this::mapProductToResponse).toList();
 	}
 
 	@Override
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'EMPLOYEE')")
 	public ProductResponse getProductById(Long id) {
 		Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
-		
+
 		return mapProductToResponse(product);
 	}
 
@@ -86,12 +81,11 @@ public class ProductServiceImpl implements ProductService {
 
 		Supplier updatedSupplier = supplierRepository.findById(updateRequest.getSupplierId())
 				.orElseThrow(() -> new SupplierNotFoundException(updateRequest.getSupplierId()));
-		
-		
+
 		mapRequestToProduct(existing, updateRequest, updatedCategory, updatedSupplier);
 
 		Product saved = productRepository.save(existing);
-		
+
 		return mapProductToResponse(saved);
 	}
 
@@ -104,30 +98,41 @@ public class ProductServiceImpl implements ProductService {
 		productRepository.delete(product);
 	}
 
+	@Override
+	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+	public List<ProductResponse> getLowStockProducts() {
+
+		return productRepository.findLowStockProducts().stream().map(this::mapProductToResponse).toList();
+
+	}
+
 	private void mapRequestToProduct(Product product, ProductRequest request, Category category, Supplier supplier) {
 		product.setName(request.getName());
 		product.setDescription(request.getDescription());
 		product.setPrice(request.getPrice());
-		product.setQuantity(request.getQuantity());
+//		product.setQuantity(request.getQuantity());
 		product.setSku(request.getSku());
 		product.setCategory(category);
 		product.setSupplier(supplier);
+		
+		
+		
 	}
-	
+
 	private ProductResponse mapProductToResponse(Product product) {
 
-	    ProductResponse response = new ProductResponse();
+		ProductResponse response = new ProductResponse();
 
-	    response.setId(product.getId());
-	    response.setName(product.getName());
-	    response.setDescription(product.getDescription());
-	    response.setPrice(product.getPrice());
-	    response.setQuantity(product.getQuantity());
-	    response.setSku(product.getSku());
+		response.setId(product.getId());
+		response.setName(product.getName());
+		response.setDescription(product.getDescription());
+		response.setPrice(product.getPrice());
+		response.setQuantity(product.getQuantity());
+		response.setSku(product.getSku());
 
-	    response.setCategory(product.getCategory().getName());
-	    response.setSupplier(product.getSupplier().getName());
+		response.setCategory(product.getCategory().getName());
+		response.setSupplier(product.getSupplier().getName());
 
-	    return response;
+		return response;
 	}
 }

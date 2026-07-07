@@ -1,72 +1,82 @@
 package com.aryan.inventory.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 public class ProductRequest {
 
-    private String name;
-    private String description;
-    private double price;
-    private int quantity;
-    private String sku;
+	@NotBlank(message = "Product name is required!")
+	@Size(max = 100, message = "Product name cannot exceed 100 charecters")
+	private String name;
 
-    private Long categoryId;
-    private Long supplierId;
+	@Size(max = 500, message = "Description cannot exceed 500 characters")
+	private String description;
 
-    public ProductRequest() {
-    }
+	@NotNull(message = "Price is required")
+	@Positive(message = "Price must be greater than 0")
+	private double price;
 
-    public String getName() {
-        return name;
-    }
+	@NotBlank(message = "SKU is required")
+	@Pattern(regexp = "^[A-Z0-9-]+$", message = "SKU may contain only uppercase letters, numbers and hyphens")
+	private String sku;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@NotNull
+	private Long categoryId;
 
-    public String getDescription() {
-        return description;
-    }
+	@NotNull
+	private Long supplierId;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public ProductRequest() {
+	}
 
-    public double getPrice() {
-        return price;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public int getQuantity() {
-        return quantity;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getSku() {
-        return sku;
-    }
+	public double getPrice() {
+		return price;
+	}
 
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
+	public void setPrice(double price) {
+		this.price = price;
+	}
 
-    public Long getCategoryId() {
-        return categoryId;
-    }
+	public String getSku() {
+		return sku;
+	}
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
 
-    public Long getSupplierId() {
-        return supplierId;
-    }
+	public Long getCategoryId() {
+		return categoryId;
+	}
 
-    public void setSupplierId(Long supplierId) {
-        this.supplierId = supplierId;
-    }
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public Long getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(Long supplierId) {
+		this.supplierId = supplierId;
+	}
 }

@@ -9,6 +9,8 @@ import com.aryan.inventory.dto.UserResponse;
 
 import com.aryan.inventory.service.AuthenticationService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,14 +24,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public UserResponse register(@RequestBody RegisterRequest request) {
+    public UserResponse register(@RequestBody @Valid RegisterRequest request) {
 
         return authService.register(request);
 
     }
     
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody @Valid LoginRequest request) {
     	return authService.login(request);
     }
 }

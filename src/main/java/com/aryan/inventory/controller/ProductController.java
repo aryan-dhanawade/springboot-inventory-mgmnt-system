@@ -11,6 +11,8 @@ import com.aryan.inventory.dto.ProductResponse;
 
 import com.aryan.inventory.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -22,7 +24,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ProductResponse addProduct(@RequestBody ProductRequest request) {
+    public ProductResponse addProduct(@RequestBody @Valid ProductRequest request) {
         return productService.addProduct(request);
     }
 
@@ -46,6 +48,12 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+    }
+    
+    @GetMapping("/lowStock")
+    public List<ProductResponse> getLowStockProducts() {
+    	return productService.getLowStockProducts();
+    	
     }
 
 }

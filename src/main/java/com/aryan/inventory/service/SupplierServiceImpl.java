@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.aryan.inventory.entity.Category;
 import com.aryan.inventory.entity.Supplier;
 import com.aryan.inventory.exception.SupplierNotFoundException;
 import com.aryan.inventory.repository.SupplierRepository;
+import com.aryan.inventory.util.CaptializeString;
 
 @Service
 public class SupplierServiceImpl implements SupplierService {
@@ -21,7 +23,7 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public Supplier addSupplier(Supplier supplier) {
-        return supplierRepository.save(supplier);
+        return supplierRepository.save(normalizeName(supplier));
     }
 
     @Override
@@ -63,5 +65,11 @@ public class SupplierServiceImpl implements SupplierService {
         	supplierRepository.delete(supplier);
     
         
+    }
+    
+    private Supplier normalizeName(Supplier supplier) {
+    	String normalizedName = CaptializeString.capitalizeString(supplier.getName());
+    	supplier.setName(normalizedName);
+    	return supplier;
     }
 }
