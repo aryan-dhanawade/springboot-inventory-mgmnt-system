@@ -50,7 +50,7 @@ public class ProductController {
         productService.deleteProduct(id);
     }
     
-    @GetMapping("/lowStock")
+    @GetMapping("/low-stock")
     public List<ProductResponse> getLowStockProducts() {
     	return productService.getLowStockProducts();
     	
