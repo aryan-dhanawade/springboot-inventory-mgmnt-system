@@ -2,6 +2,8 @@ package com.aryan.inventory.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -58,9 +60,11 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'EMPLOYEE')")
-	public List<ProductResponse> getAllProducts() {
+	public Page<ProductResponse> getAllProducts(Pageable pageable) {
 
-		return productRepository.findAll().stream().map(this::mapProductToResponse).toList();
+		Page<Product> products = productRepository.findAll(pageable);
+
+		return products.map(this::mapProductToResponse);
 	}
 
 	@Override
@@ -106,15 +110,14 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.findLowStockProducts().stream().map(this::mapProductToResponse).toList();
 
 	}
-	
+
 	@Override
 	@PreAuthorize("isAuthenticated()")
-	public List<ProductResponse> searchProducts(ProductFilter filter){
-		return productRepository
-				.findAll(ProductSpecification.filter(filter))
-				.stream()
-				.map(this::mapProductToResponse)
-				.toList();
+	public Page<ProductResponse> searchProducts(ProductFilter filter, Pageable pageable) {
+		Page<Product> products = productRepository.findAll(ProductSpecification.filter(filter), pageable);
+
+		return products.map(this::mapProductToResponse);
+
 	}
 
 	private void mapRequestToProduct(Product product, ProductRequest request, Category category, Supplier supplier) {
@@ -125,9 +128,7 @@ public class ProductServiceImpl implements ProductService {
 		product.setSku(request.getSku());
 		product.setCategory(category);
 		product.setSupplier(supplier);
-		
-		
-		
+
 	}
 
 	private ProductResponse mapProductToResponse(Product product) {

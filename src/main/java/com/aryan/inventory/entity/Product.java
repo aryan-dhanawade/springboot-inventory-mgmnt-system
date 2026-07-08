@@ -29,7 +29,7 @@ public class Product {
 
     @Min(0)
     @Column(nullable = false)
-    private int quantity;
+    private int quantity = 0;
     
     @PositiveOrZero
     private Integer reorderLevel;
