@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.aryan.inventory.dto.ProductFilter;
 import com.aryan.inventory.dto.ProductRequest;
 import com.aryan.inventory.dto.ProductResponse;
 
@@ -15,7 +16,7 @@ import com.aryan.inventory.entity.Supplier;
 import com.aryan.inventory.repository.CategoryRepository;
 import com.aryan.inventory.repository.ProductRepository;
 import com.aryan.inventory.repository.SupplierRepository;
-
+import com.aryan.inventory.specification.ProductSpecification;
 import com.aryan.inventory.exception.CategoryNotFoundException;
 import com.aryan.inventory.exception.SupplierNotFoundException;
 import com.aryan.inventory.exception.ProductNotFoundException;
@@ -104,6 +105,16 @@ public class ProductServiceImpl implements ProductService {
 
 		return productRepository.findLowStockProducts().stream().map(this::mapProductToResponse).toList();
 
+	}
+	
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public List<ProductResponse> searchProducts(ProductFilter filter){
+		return productRepository
+				.findAll(ProductSpecification.filter(filter))
+				.stream()
+				.map(this::mapProductToResponse)
+				.toList();
 	}
 
 	private void mapRequestToProduct(Product product, ProductRequest request, Category category, Supplier supplier) {
