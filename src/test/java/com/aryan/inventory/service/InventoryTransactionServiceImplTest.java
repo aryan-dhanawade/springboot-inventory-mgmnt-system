@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,17 +50,8 @@ class InventoryTransactionServiceImplTest {
     @InjectMocks
     private InventoryTransactionServiceImpl service;
 
-    
-    private void mockAuthenticatedUser() {
 
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("admin");
 
-        SecurityContext context = mock(SecurityContext.class);
-        when(context.getAuthentication()).thenReturn(authentication);
-
-        SecurityContextHolder.setContext(context);
-    }
     
     @AfterEach
     void clearSecurity() {
@@ -279,5 +269,16 @@ class InventoryTransactionServiceImplTest {
         t.setRemarks("Test");
         t.setTimestamp(LocalDateTime.now());
         return t;
+    }
+    
+    private void mockAuthenticatedUser() {
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("admin");
+
+        SecurityContext context = mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(context);
     }
 }
