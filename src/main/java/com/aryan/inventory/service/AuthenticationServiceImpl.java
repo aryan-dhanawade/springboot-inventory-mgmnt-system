@@ -3,6 +3,7 @@ package com.aryan.inventory.service;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,11 +41,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		User user = (User) authentication.getPrincipal();
 
-		String token = jwtService.generateToken(userDetails);
-
-		return new LoginResponse(token, request.getUsername(), "DUMMY_ROLE");
+		String token = jwtService.generateToken(user );
+		
+		
+		return new LoginResponse(token, user.getUsername(), user.getRole().toString());
 	}
 
 	public UserResponse register(RegisterRequest request) {
